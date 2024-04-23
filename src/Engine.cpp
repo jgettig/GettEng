@@ -25,8 +25,10 @@
 #include <filesystem>
 
 //external headers
-#include <glm/glm.hpp>
-#include <rapidjson/document.h>
+#include "glm/glm.hpp"
+#include "rapidjson/document.h"
+#include "Lua/lua.hpp"
+#include "LuaBridge/LuaBridge.h"
 
 //course headers
 #include "Helper.h"
@@ -38,8 +40,6 @@
 #include "Input.h"
 #include "ComponentDB.h"
 
-#include "Lua/lua.hpp"
-#include "LuaBridge/LuaBridge.h"
 
 
 using std::cout;
@@ -59,11 +59,7 @@ void Engine::game_loop()
 
 	while (is_running) {
 		if (do_sceneChange) {
-			SceneDB::load_scene(next_scene);
-			scene_name = next_scene;
-			next_scene.clear();
-
-			do_sceneChange = false;
+			load_scene();
 		}
 
 		input();
@@ -83,7 +79,20 @@ void Engine::game_loop()
 	exit(0);
 }
 
-void Engine::load_scene(const std::string& new_scene)
+void Engine::load_scene()
+{
+	//TODO: implement
+
+	/*
+	SceneDB::load_scene(next_scene);
+	scene_name = next_scene;
+	next_scene.clear();
+
+	do_sceneChange = false;
+	*/
+}
+
+void Engine::load_scene_cpp(const std::string& new_scene)
 {
 	next_scene = new_scene;
 	do_sceneChange = true;
@@ -134,58 +143,53 @@ void Engine::onStart()
 	/* ----- Read map from file ----- */
 
 	if (d.HasMember("initial_scene") && d["initial_scene"].IsString())
-		next_scene = d["initial_scene"].GetString();
+		scene_name = d["initial_scene"].GetString();
 
-	if (next_scene == "") {
+	if (scene_name == "") {
 		cout << "error: initial_scene unspecified";
 		exit(0);
 	}
 
-	/* ----- Read rendering config from file ----- */ 
+	SDL_Color clear_color = { 255, 255, 255, 255 };
+
+	if (d.HasMember("clear_color_r") && d["clear_color_r"].IsInt())
+		clear_color.r = d["clear_color_r"].GetInt();
+	if (d.HasMember("clear_color_g") && d["clear_color_g"].IsInt())
+		clear_color.g = d["clear_color_g"].GetInt();
+	if (d.HasMember("clear_color_b") && d["clear_color_b"].IsInt())
+		clear_color.b = d["clear_color_b"].GetInt();
+
+	int scale = 1;
+	if (d.HasMember("global_scale") && d["global_scale"].IsInt())
+		scale = d["global_scale"].GetInt();
+
+	/* ----- Read scene information from file ----- */ 
 	glm::ivec2 disp_res = { X_DEFAULT_RES, Y_DEFAULT_RES };
 
-	SDL_Color clear_color = { 255, 255, 255, 255 };
-	float zoom = 1;
-	bool flip = false;
-
-	//check for resources/rendering.config
-	if (std::filesystem::exists(std::filesystem::path(RENDERING_CONFIG_PATH))) {
-		//read file
-		EngineUtils::ReadJsonFile(RENDERING_CONFIG_PATH, d);
-
-		if (d.HasMember("x_resolution") && d["x_resolution"].IsInt())
-			disp_res.x = d["x_resolution"].GetInt();
-		if (d.HasMember("y_resolution") && d["y_resolution"].IsInt())
-			disp_res.y = d["y_resolution"].GetInt();
-
-		/*if (d.HasMember("cam_offset_x") && d["cam_offset_x"].IsNumber())
-			cam_offset.x = d["cam_offset_x"].GetFloat();
-		if (d.HasMember("cam_offset_y") && d["cam_offset_y"].IsNumber())
-			cam_offset.y = d["cam_offset_y"].GetFloat();*/
-
-		if (d.HasMember("clear_color_r") && d["clear_color_r"].IsInt())
-			clear_color.r = d["clear_color_r"].GetInt();
-		if (d.HasMember("clear_color_g") && d["clear_color_g"].IsInt())
-			clear_color.g = d["clear_color_g"].GetInt();
-		if (d.HasMember("clear_color_b") && d["clear_color_b"].IsInt())
-			clear_color.b = d["clear_color_b"].GetInt();
-
-		if (d.HasMember("zoom_factor") && d["zoom_factor"].IsNumber())
-			zoom = d["zoom_factor"].GetFloat();
-
-		/*if (d.HasMember("cam_ease_factor") && d["cam_ease_factor"].IsNumber())
-			camera_ease = d["cam_ease_factor"].GetFloat();*/
+	string scene_path = SCENES_FOLDER_PATH + scene_name + ".json";
+	//check that scene file exists
+	if (!std::filesystem::exists(scene_path)) {
+		cout << "error: " << scene_name << ".json missing";
+		exit(0);
 	}
-	 
+
+	EngineUtils::ReadJsonFile(scene_path, d);
+
+	//if d has no layers, exit early
+	if (!(d.HasMember("layers") && d["layers"].IsArray())) {
+		cout << "Scene file has no layers... exiting";
+		exit(0);
+	}
+
+
 	/* ----- Create Renderer ----- */
-	Renderer::init(disp_res.x, disp_res.y, title, clear_color);
-	Renderer::set_camera_zoom(zoom);
+	Renderer::init(d, title, clear_color, scale);
 
 	/* ----- Create Audio DB ----- */
 	AudioDB::init();
 
 	/* ----- Create Scene DB ----- */
-	SceneDB::init();
+	SceneDB::init(d);
 
 	is_running = true;
 }

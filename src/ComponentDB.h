@@ -21,6 +21,7 @@ public:
 	static int get_component(luabridge::LuaRef& instance_table, std::string comp_name);
 
 	//reads in json overrides for a lua component instance
+	static int read_component_json_A2(luabridge::LuaRef* component_table, const rapidjson::Value& comp_json);
 	static int read_component_json(luabridge::LuaRef* component_table, const rapidjson::Value& comp_json);
 
 	static int inherit(luabridge::LuaRef& instance_table, const luabridge::LuaRef& parent_table);

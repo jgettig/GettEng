@@ -49,7 +49,9 @@ public:
 	//runs input() -> update() -> render()
 	void game_loop();
 
-	static void load_scene(const std::string& new_scene);
+	void load_scene();
+
+	static void load_scene_cpp(const std::string& new_scene);
 	static luabridge::LuaRef get_scene_name() { return luabridge::LuaRef(ComponentDB::get_state(), scene_name); }
 
 
@@ -60,10 +62,8 @@ private:
 
 	//TODO: Replace with camera class
 	bool is_running = true;
-	bool won = false;
-	bool lost = false;
 
-	inline static bool do_sceneChange = true;
+	inline static bool do_sceneChange = false;
 
 	//runs once at the beginning of game_loop()
 	//runs game logic for beginning of play

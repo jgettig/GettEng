@@ -62,6 +62,8 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\TemplateDB.cpp" />
     <ClCompile Include="src\TextDB.cpp" />
+    <ClCompile Include="src\Transform.cpp" />
+    <ClCompile Include="src\Tilemap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ComponentDB.h" />
@@ -104,6 +106,8 @@
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\TemplateDB.h" />
     <ClInclude Include="src\TextDB.h" />
+    <ClInclude Include="src\Transform.h" />
+    <ClInclude Include="src\Tilemap.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

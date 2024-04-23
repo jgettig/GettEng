@@ -6,6 +6,7 @@
 #include "Renderer.h"
 #include "AudioDB.h"
 #include "Engine.h"
+#include "Transform.h"
 
 #include "Helper.h"
 #include "keycode_to_scancode.h"
@@ -13,7 +14,10 @@
 #include <filesystem>
 #include <thread>
 #include <cstdlib>
+#include <sstream>
+#include <string>
 
+using std::string;
 using std::cout;
 using std::endl;
 
@@ -78,7 +82,7 @@ int ComponentDB::get_component(LuaRef& instance_table, std::string comp_name)
 	return inherit(instance_table, parent_table);
 }
 
-int ComponentDB::read_component_json(luabridge::LuaRef* component_table, const rapidjson::Value& comp_json)
+int ComponentDB::read_component_json_A2(luabridge::LuaRef* component_table, const rapidjson::Value& comp_json)
 {
 
 	for (auto& property : comp_json.GetObject()) {
@@ -108,6 +112,60 @@ int ComponentDB::read_component_json(luabridge::LuaRef* component_table, const r
 	}
 
 	return 0;
+}
+
+int ComponentDB::read_component_json(luabridge::LuaRef* component_table, const rapidjson::Value& comp_json)
+{
+
+	std::istringstream prop_stream(comp_json["value"].GetString());
+
+	string prop_line;
+	while (std::getline(prop_stream, prop_line)) {
+		std::istringstream line_stream(prop_line);
+		string prop;
+		string val;
+		char junk;
+		line_stream >> prop >> junk >> val;
+
+		if (junk != '=') {
+			cout << "Error: transform tried to read property from json but didn't encounter an equals sign (did you put a space before and after it?)";
+			exit(0);
+		}
+
+		bool failed;
+		float fval;
+		try {
+			failed = false;
+			fval = stof(val);
+		}
+		catch (const std::exception& e) {
+			failed = true;
+		}
+		if (!failed) {
+			(*component_table)[prop] = fval;
+			return 0;
+		}
+		
+		float ival;
+		try {
+			failed = false;
+			ival = stoi(val);
+		}
+		catch (const std::exception& e) {
+			failed = true;
+		}
+		if (!failed) {
+			(*component_table)[prop] = ival;
+			return 0;
+		}
+
+		if (val == "true") (*component_table)[prop] = true;
+		else if (val == "false") (*component_table)[prop] = false;
+		else if (val == "null") (*component_table)[prop] = luabridge::Nil();
+
+		(*component_table)[prop] = val;
+
+	}
 }
 
 int ComponentDB::inherit(LuaRef& instance_table, const LuaRef& parent_table)
@@ -156,6 +214,18 @@ void ComponentDB::add_global_classes()
 		.addFunction("GetComponents", &Actor::get_components)
 		.addFunction("AddComponent", &Actor::cpp_add_component)
 		.addFunction("RemoveComponent", &Actor::cpp_remove_component)
+		.endClass();
+
+	//Transform
+	luabridge::getGlobalNamespace(state)
+		.beginClass<Transform>("Transform")
+		.addFunction("Translate", &Transform::translate)
+		.addFunction("Rotate", &Transform::rotate)
+		.addFunction("Scale", &Transform::rescale)
+		.addData("position", &Transform::position)
+		.addData("scale", &Transform::scale)
+		.addData("rotation", &Transform::rotation_deg)
+		.addData("pivot", &Transform::pivot)
 		.endClass();
 }
  
@@ -239,7 +309,7 @@ void ComponentDB::add_global_functions()
 
 	luabridge::getGlobalNamespace(state)
 		.beginNamespace("Scene")
-		.addFunction("Load", &Engine::load_scene)
+		.addFunction("Load", &Engine::load_scene_cpp)
 		.addFunction("GetCurrent", &Engine::get_scene_name)
 		.addFunction("DontDestroy", &SceneDB::keep_actor)
 		.endNamespace();

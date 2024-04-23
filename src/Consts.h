@@ -15,6 +15,15 @@ inline const std::string IMAGES_FOLDER_PATH = RESOURCES_PATH + "/images/";
 inline const std::string FONTS_FOLDER_PATH = RESOURCES_PATH + "/fonts/";
 inline const std::string AUDIO_FOLDER_PATH = RESOURCES_PATH + "/audio/";
 inline const std::string COMPONENT_FOLDER_PATH = RESOURCES_PATH + "/component_types/";
+inline const std::string TILEMAP_FOLDER_PATH = RESOURCES_PATH + "/tilesets/";
+
+inline const std::string ENGINE_RES_PATH = "resources_internal";
+inline const std::string ENGINE_COMPONENT_FOLDER_PATH = ENGINE_RES_PATH + "/component_types/";
+
+
+inline const std::string LAYER_CAMERA_NAME = "Layer_Camera";
+inline const std::string LAYER_OBJECTS_NAME = "GameObjects";
+inline const std::string LAYER_MAP_NAME = "TileMap";
 
 inline const SDL_Color WHITE = { 255, 255, 255, 255 };
 inline const SDL_Color RED = { 255, 0, 0, 255 };
@@ -22,6 +31,5 @@ inline const SDL_Color BLUE = { 0, 0, 255, 255 };
 
 inline const int X_DEFAULT_RES = 640;
 inline const int Y_DEFAULT_RES = 360;
-inline const float PIXELS_PER_UNIT = 100;
 
 #endif

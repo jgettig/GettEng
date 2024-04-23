@@ -6,6 +6,8 @@
 #include <queue>
 
 #include "rapidjson/document.h"
+#include "rapidjson/prettywriter.h"
+#include "rapidjson/stringbuffer.h"
 
 #include "EngineUtils.h"
 #include "Consts.h"
@@ -18,7 +20,7 @@ using std::cout;
 using std::endl;
 using std::shared_ptr;
 
-void SceneDB::init()
+void SceneDB::init(rapidjson::Document& d)
 {
 	if (initialized) {
 		cout << "error: double Renderer init call";
@@ -29,6 +31,8 @@ void SceneDB::init()
 		TemplateDB::init();
 
 	initialized = true;
+
+	load_scene(d);
 }
 
 void SceneDB::deinit()
@@ -44,65 +48,48 @@ void SceneDB::deinit()
 	initialized = false;
 }
 
-void SceneDB::load_scene(std::string scene)
+void SceneDB::load_scene(rapidjson::Document& d)
 {
 	check_init();
 
-	//empty all structures
-	std::vector<std::shared_ptr<Actor>> persistent;
-	for (auto& actor_ptr : actors) {
-		if (actor_ptr->scene_persist)
-			persistent.push_back(actor_ptr);
-	}
-	actors.clear();
-	to_destroy.clear();
+	//note: super terrible at checking for errors
+	for (auto& layer_obj : d["layers"].GetArray()) {
+		//skip iter if layer_obj is badly formatted
+		if (!(layer_obj.HasMember("name") && layer_obj["name"].IsString())) continue;
 
-	//check that scene file exists
-	std::string scene_path = SCENES_FOLDER_PATH + scene + ".scene";
+		std::string layer_name = layer_obj["name"].GetString();
 
-	if (!std::filesystem::exists(scene_path)) {
-		cout << "error: scene " << scene << " is missing";
-		exit(0);
-	}
+		if (layer_name == LAYER_OBJECTS_NAME) {
+			init_actors(layer_obj);
+		}
 
-	//load scene file into Document d
-	rapidjson::Document d;
-	EngineUtils::ReadJsonFile(scene_path, d);
 
-	//exit early if there is no "actors" member of the scene file
-	if (!(d.HasMember("actors") && d["actors"].IsArray())) {
-		return;
-	}
+		else if (layer_name == LAYER_MAP_NAME) {
 
-	//initialize actors vector with its full size (to avoid actors moving around)
-	int size = d["actors"].GetArray().Size() + persistent.size();
-	actors.reserve(size);
+			//read and init tilemap
 
-	//place persistent actors in actors vector
-	actors = persistent;
+			int id = layer_obj["id"].GetInt();
+			std::string map_name = "";
+			for (size_t i = 0; i < d["tilesets"].GetArray().Size(); ++i) {
+				if (d["tilesets"].GetArray()[i]["firstgid"].GetInt() == id) {
+					//remember filename (without directory) of map file
+					map_name = std::filesystem::path(d["tilesets"].GetArray()[i]["source"].GetString()).filename().string();
+					break;
+				}
+			}
 
-	//load all actors into actors vector
-	for (rapidjson::Value& actor : d["actors"].GetArray()) {
+			map = std::make_shared<Tilemap>(layer_obj, map_name);
 
-		const Actor* temp = nullptr;
-
-		//if new actor is templated, construct actor with template
-		if (actor.HasMember("template") && actor["template"].IsString())
-			temp = TemplateDB::get_template_actor(actor["template"].GetString());
-
-		actors.emplace_back(new Actor(actor, temp, false));
-
-		shared_ptr<Actor> a = actors.back();
-
-		running_actors.emplace_back(a);
-
-		//do things with a
+		}
 	}
 }
 
 bool SceneDB::tick()
 {
 	check_init();
+
+	if (map.get() != nullptr)
+		map->draw();
 
 
 	for (shared_ptr<Actor>& a : running_actors) {
@@ -190,5 +177,42 @@ void SceneDB::check_init() {
 	if (!initialized) {
 		cout << "error: called SceneDB function before initializing";
 		exit(0);
+	}
+}
+
+void SceneDB::init_actors(rapidjson::Value& actor_layer)
+{
+	//empty all structures
+	std::vector<std::shared_ptr<Actor>> persistent;
+	for (auto& actor_ptr : actors) {
+		if (actor_ptr->scene_persist)
+			persistent.push_back(actor_ptr);
+	}
+	actors.clear();
+	to_destroy.clear();
+
+	//check actor_layer is formatted correctly
+	if (!(actor_layer.HasMember("objects") && actor_layer["objects"].IsArray())) {
+		cout << "Error: tried to read in actors from layer " << LAYER_OBJECTS_NAME << " but could not find an objects array";
+		exit(0);
+	}
+
+	//initialize actors vector with its full size (to avoid actors moving around)
+	int size = actor_layer["objects"].GetArray().Size() + persistent.size();
+	actors.reserve(size);
+
+	//place persistent actors in actors vector
+	actors = persistent;
+
+	//load all actors into actors vector
+	for (auto& actor : actor_layer["objects"].GetArray()) {
+
+		actors.emplace_back(new Actor(actor));
+
+		shared_ptr<Actor> a = actors.back();
+
+		running_actors.emplace_back(a);
+
+		//do things with a
 	}
 }

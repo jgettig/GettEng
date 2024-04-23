@@ -60,7 +60,7 @@ Actor* TemplateDB::create_template(std::string template_name)
 	if (d.HasMember("template") && d["template"].IsString())
 		temp = create_template(d["template"].GetString());
 
-	templates.emplace(template_name, Actor(d, temp, true));
+	templates.emplace(template_name, Actor(d, true));
 
 	return &templates[template_name];
 }

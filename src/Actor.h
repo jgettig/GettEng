@@ -26,17 +26,21 @@
 #include <map>
 #include <memory>
 
+#include "Transform.h"
+
 class Actor
 {
 public:
 	//default (and invalid) constructor
 	Actor() {};
 
-	//constructs an actor based on template actor templ with a new unique id
-	Actor(const rapidjson::Value& actor_in, const Actor* templ, bool is_templ);
+	//constructs an actor to be used as a template
+	Actor(const rapidjson::Value& actor_in_A2, bool is_templ);
 
-	//constructs an actor purely based on a template, with no overrides
+	//constructs an actor as a copy of templ, with no overrides
 	Actor(const Actor* templ);
+
+	Actor(const rapidjson::Value& actor_json);
 
 	~Actor();
 
@@ -102,22 +106,27 @@ private:
 	std::map<std::string, size_t> components_with_update;				//component idxs with OnUpdate defined, ordered by key
 	std::map<std::string, size_t> components_with_late_update;			//component idxs with OnStart defined, ordered by key
 
+	Transform t;
+
 	bool active = true;
 	static inline int max_id = 0;
 	static inline int added_components = 0;
 
 	void run_function(std::map<std::string, size_t>& component_idxs, std::string function);
 
+	void init_structures();
 	void insert_new_components();
 	void index_component(luabridge::LuaRef& comp, size_t i);
 
 	void copy_properties(const Actor* other);
 
-	void read_json_properties(const rapidjson::Value& actor_in);
+	void read_json_properties_A2(const rapidjson::Value& actor_in);
+	void read_json_properties(const rapidjson::Value& actor_json, int templ_idx);
 
 	luabridge::LuaRef& add_component(const std::string& type, const std::string& key);
 
 	static void report_error(std::string& name, const luabridge::LuaException& e);
+
 };
 
 

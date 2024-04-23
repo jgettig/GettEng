@@ -8,23 +8,25 @@
 #include <set>
 #include <memory>
 
+#include "rapidjson/document.h"
 #include "glm/glm.hpp"
 #include "Lua/lua.hpp"
 #include "LuaBridge/LuaBridge.h"
 
 #include "Actor.h"
 #include "TemplateDB.h"
+#include "Tilemap.h"
 
 class SceneDB
 {
 public:
 
-	//empty constructor, does not produce a valid SceneDB
-	static void init();
+	//initializes scenedb based on scene in document d
+	static void init(rapidjson::Document& d);
 	static void deinit();
 
 	//loads scene with filename given by `scene`
-	static void load_scene(const std::string scene);
+	static void load_scene(rapidjson::Document& d);
 
 	//returns whether game still wants to run
 	static bool tick();
@@ -47,6 +49,8 @@ private:
 	static inline std::vector<std::shared_ptr<Actor>> running_actors;
 	static inline std::vector<std::shared_ptr<Actor>> new_actors;
 
+	static inline std::shared_ptr<Tilemap> map;
+
 	static inline bool initialized = false;
 
 	//static inline std::map<float, std::set<int>> actor_y_map; // outer map stores y pos, inner map ordered by load order
@@ -58,6 +62,8 @@ private:
 	//static glm::ivec2 get_index(glm::vec2 pos, glm::vec2 cell_size);
 
 	static void check_init();
+
+	static void init_actors(rapidjson::Value& actor_layer);
 };
 
 #endif

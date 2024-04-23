@@ -18,23 +18,13 @@ using std::string;
 
 using luabridge::LuaRef;
 
-Actor::Actor(const rapidjson::Value& actor_in, const Actor* templ, bool is_templ) : id(max_id++)
+Actor::Actor(const rapidjson::Value& actor_in_A2, bool is_templ) : id(max_id++)
 {
-	components = std::vector<luabridge::LuaRef>();
-	new_components = std::vector<luabridge::LuaRef>();
-
-	components_by_key = std::map<std::string, size_t>();
-	components_by_type = std::map<std::string, std::vector<size_t>>();
-	components_with_start = std::map<std::string, size_t>();
-	components_with_update = std::map<std::string, size_t>();
-	components_with_late_update = std::map<std::string, size_t>();
+	init_structures();
 
 	if (state == nullptr) state = ComponentDB::get_state();
 
-	if (templ != nullptr)
-		copy_properties(templ);
-
-	read_json_properties(actor_in);
+	read_json_properties_A2(actor_in_A2);
 
 	//index components
 	for (size_t i = 0; i < components.size(); ++i) {
@@ -55,6 +45,41 @@ Actor::Actor(const Actor* templ) : id(max_id++)
 		LuaRef& component = components[i];
 		index_component(component, i);
 	}
+}
+
+Actor::Actor(const rapidjson::Value& actor_json) : id(max_id++)
+{
+	if (state == nullptr) state = ComponentDB::get_state();
+
+	int templ_idx = -1;
+	const Actor* templ;
+	//loop through properties to find 
+	if (actor_json.HasMember("properties") && actor_json["properties"].IsArray()) {
+		auto props = actor_json["properties"].GetArray();
+		for (int i = 0; i < props.Size(); ++i) {
+			if (props[i].HasMember("name") && props[i]["name"].IsString() && props[i]["name"].GetString() == "template" &&
+				props[i].HasMember("value") && props[i]["value"].IsString()) 
+			{
+				templ_idx = i;
+			}
+		}
+	}
+
+	if (templ_idx >= 0) {
+		//gross line but compiler requires it
+		templ = TemplateDB::get_template_actor(actor_json["properties"].GetArray()[templ_idx]["value"].GetString());
+		copy_properties(templ);
+	}
+
+	read_json_properties(actor_json, templ_idx);
+
+
+	//index components
+	for (size_t i = 0; i < components.size(); ++i) {
+		LuaRef& component = components[i];
+		index_component(component, i);
+	}
+
 }
 
 Actor::~Actor()
@@ -214,7 +239,7 @@ void Actor::copy_properties(const Actor* other)
 	}
 }
 
-void Actor::read_json_properties(const rapidjson::Value& actor_in)
+void Actor::read_json_properties_A2(const rapidjson::Value& actor_in)
 {
 	if (actor_in.HasMember("name") && actor_in["name"].IsString())
 		name = actor_in["name"].GetString();
@@ -251,14 +276,62 @@ void Actor::read_json_properties(const rapidjson::Value& actor_in)
 				ref = &(components[components_by_key[key]]);
 			}
 
-			ComponentDB::read_component_json(ref, component.value);
+			ComponentDB::read_component_json_A2(ref, component.value);
 
 			(*ref)["actor"] = this;
-
+			(*ref)["Transform"] = t;
 		}
 
 	}
 	
+}
+
+void Actor::read_json_properties(const rapidjson::Value& actor_json, int templ_idx)
+{
+	if (actor_json.HasMember("name") && actor_json["name"].IsString())
+		name = actor_json["name"].GetString();
+
+	int transform_idx = t.read_json(actor_json);
+
+	//loop through components (properties)
+	if (actor_json.HasMember("properties") && actor_json["properties"].IsArray()) {
+
+		for (int i = 0; i < actor_json["properties"].GetArray().Size(); ++i) {
+			if (i == transform_idx || i == templ_idx) continue; //skip the transform and template
+
+			auto& prop = actor_json["properties"].GetArray()[i];
+			
+			LuaRef* ref;
+			string type = prop["name"].GetString();
+			string key = "r" + std::to_string(added_components++);
+
+			if (prop.HasMember("name") && prop["name"].IsString()) {
+				type = prop["name"].GetString();
+			}
+			else if (components[components_by_key[key]]["type"].isString()) {
+				type = components[components_by_key[key]]["type"].tostring();
+			}
+			else {
+				cout << "undefined behevior in actor declaration";
+				exit(0);
+			}
+
+
+			//new component
+			if (components_by_key.count(key) == 0) {
+				ref = &(add_component(type, key));
+			}
+			//overwriting inherited component
+			else {
+				ref = &(components[components_by_key[key]]);
+			}
+
+			ComponentDB::read_component_json(ref, prop);
+
+			(*ref)["actor"] = this;
+			(*ref)["Transform"] = t;
+		}
+	}
 }
 
 luabridge::LuaRef& Actor::add_component(const std::string& type, const std::string& key)
@@ -286,4 +359,16 @@ void Actor::report_error(std::string& name, const luabridge::LuaException& e)
 
 	/* Display with color */
 	std::cout << "\033[31m" << name << " : " << e_msg << "\033[0m" << std::endl;
+}
+
+void Actor::init_structures()
+{
+	components = std::vector<luabridge::LuaRef>();
+	new_components = std::vector<luabridge::LuaRef>();
+
+	components_by_key = std::map<std::string, size_t>();
+	components_by_type = std::map<std::string, std::vector<size_t>>();
+	components_with_start = std::map<std::string, size_t>();
+	components_with_update = std::map<std::string, size_t>();
+	components_with_late_update = std::map<std::string, size_t>();
 }
