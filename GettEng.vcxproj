@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\ComponentDB.cpp" />
+    <ClCompile Include="inc\lua\lapi.c" />
+    <ClCompile Include="inc\lua\lauxlib.c" />
+    <ClCompile Include="inc\lua\lbaselib.c" />
+    <ClCompile Include="inc\lua\lcode.c" />
+    <ClCompile Include="inc\lua\lcorolib.c" />
+    <ClCompile Include="inc\lua\lctype.c" />
+    <ClCompile Include="inc\lua\ldblib.c" />
+    <ClCompile Include="inc\lua\ldebug.c" />
+    <ClCompile Include="inc\lua\ldo.c" />
+    <ClCompile Include="inc\lua\ldump.c" />
+    <ClCompile Include="inc\lua\lfunc.c" />
+    <ClCompile Include="inc\lua\lgc.c" />
+    <ClCompile Include="inc\lua\linit.c" />
+    <ClCompile Include="inc\lua\liolib.c" />
+    <ClCompile Include="inc\lua\llex.c" />
+    <ClCompile Include="inc\lua\lmathlib.c" />
+    <ClCompile Include="inc\lua\lmem.c" />
+    <ClCompile Include="inc\lua\loadlib.c" />
+    <ClCompile Include="inc\lua\lobject.c" />
+    <ClCompile Include="inc\lua\lopcodes.c" />
+    <ClCompile Include="inc\lua\loslib.c" />
+    <ClCompile Include="inc\lua\lparser.c" />
+    <ClCompile Include="inc\lua\lstate.c" />
+    <ClCompile Include="inc\lua\lstring.c" />
+    <ClCompile Include="inc\lua\lstrlib.c" />
+    <ClCompile Include="inc\lua\ltable.c" />
+    <ClCompile Include="inc\lua\ltablib.c" />
+    <ClCompile Include="inc\lua\ltm.c" />
+    <ClCompile Include="inc\lua\lundump.c" />
+    <ClCompile Include="inc\lua\lutf8lib.c" />
+    <ClCompile Include="inc\lua\lvm.c" />
+    <ClCompile Include="inc\lua\lzio.c" />
+    <ClCompile Include="src\Input.cpp" />
+    <ClCompile Include="src\AudioDB.cpp" />
+    <ClCompile Include="src\ImageDB.cpp" />
+    <ClCompile Include="src\Renderer.cpp" />
+    <ClCompile Include="src\SceneDB.cpp" />
+    <ClCompile Include="src\Actor.cpp" />
+    <ClCompile Include="src\Engine.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\TemplateDB.cpp" />
+    <ClCompile Include="src\TextDB.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ComponentDB.h" />
+    <ClInclude Include="inc\lua\lapi.h" />
+    <ClInclude Include="inc\lua\lauxlib.h" />
+    <ClInclude Include="inc\lua\lcode.h" />
+    <ClInclude Include="inc\lua\lctype.h" />
+    <ClInclude Include="inc\lua\ldebug.h" />
+    <ClInclude Include="inc\lua\ldo.h" />
+    <ClInclude Include="inc\lua\lfunc.h" />
+    <ClInclude Include="inc\lua\lgc.h" />
+    <ClInclude Include="inc\lua\ljumptab.h" />
+    <ClInclude Include="inc\lua\llex.h" />
+    <ClInclude Include="inc\lua\llimits.h" />
+    <ClInclude Include="inc\lua\lmem.h" />
+    <ClInclude Include="inc\lua\lobject.h" />
+    <ClInclude Include="inc\lua\lopcodes.h" />
+    <ClInclude Include="inc\lua\lopnames.h" />
+    <ClInclude Include="inc\lua\lparser.h" />
+    <ClInclude Include="inc\lua\lprefix.h" />
+    <ClInclude Include="inc\lua\lstate.h" />
+    <ClInclude Include="inc\lua\lstring.h" />
+    <ClInclude Include="inc\lua\ltable.h" />
+    <ClInclude Include="inc\lua\ltm.h" />
+    <ClInclude Include="inc\lua\lua.h" />
+    <ClInclude Include="inc\lua\lua.hpp" />
+    <ClInclude Include="inc\lua\luaconf.h" />
+    <ClInclude Include="inc\lua\lualib.h" />
+    <ClInclude Include="inc\lua\lundump.h" />
+    <ClInclude Include="inc\lua\lvm.h" />
+    <ClInclude Include="inc\lua\lzio.h" />
+    <ClInclude Include="src\Input.h" />
+    <ClInclude Include="src\AudioDB.h" />
+    <ClInclude Include="src\ImageDB.h" />
+    <ClInclude Include="src\Renderer.h" />
+    <ClInclude Include="src\SceneDB.h" />
+    <ClInclude Include="src\Consts.h" />
+    <ClInclude Include="src\EngineUtils.h" />
+    <ClInclude Include="src\Actor.h" />
+    <ClInclude Include="src\Engine.h" />
+    <ClInclude Include="src\TemplateDB.h" />
+    <ClInclude Include="src\TextDB.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{2ca530e0-f202-4d81-ad04-b4154744f116}</ProjectGuid>
+    <RootNamespace>gameengine</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>GettEng</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(ProjectDir)/inc;$(ProjectDir)/helpers;$(ProjectDir)/inc/SDL2;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)inc\SDL2\lib\;$(ProjectDir)inc\SDL_image\lib\;$(ProjectDir)inc\SDL_mixer\lib\;$(ProjectDir)inc\SDL_ttf\lib\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(ProjectDir)/inc;$(ProjectDir)/helpers;$(ProjectDir)/inc/SDL2;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)inc\SDL2\lib\;$(ProjectDir)inc\SDL_image\lib\;$(ProjectDir)inc\SDL_mixer\lib\;$(ProjectDir)inc\SDL_ttf\lib\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(ProjectDir)/inc;$(ProjectDir)/helpers;$(ProjectDir)/inc/SDL2;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)inc\SDL2\lib\;$(ProjectDir)inc\SDL_image\lib\;$(ProjectDir)inc\SDL_mixer\lib\;$(ProjectDir)inc\SDL_ttf\lib\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(ProjectDir)/inc;$(ProjectDir)/helpers;$(ProjectDir)/inc/SDL2;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)inc\SDL2\lib\;$(ProjectDir)inc\SDL_image\lib\;$(ProjectDir)inc\SDL_mixer\lib\;$(ProjectDir)inc\SDL_ttf\lib\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_ttf.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_ttf.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_ttf.lib;Shell32.lib</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy dlls\* "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_ttf.lib;Shell32.lib</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy dlls\* "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
